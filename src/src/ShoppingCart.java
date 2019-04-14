@@ -146,7 +146,9 @@ public class ShoppingCart {
 
     private String getCampaignsAsText() {
         String campaignsStr = "";
-        for (Category category: findAllCategories()) {
+        List<Category> categories = new ArrayList<>(findAllCategories());
+        categories.sort(null);
+        for (Category category: categories) {
 
             List<Product> products = findProducts(category);
             int productQuantity = products.stream().mapToInt(product -> productQuantities.get(product)).sum();
