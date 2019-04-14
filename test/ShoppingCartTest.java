@@ -25,23 +25,58 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenShoppingCartWithProductAndCouponsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmount() {
-        Category category = new Category("category");
-        Product product = new Product("product", 50.0, category);
-        shoppingCart.addProduct(2, product);
+    public void givenProductsForDifferentCategoriesWithoutAnyDiscountsWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmount() {
 
-        Coupon rateCoupon = new RateCoupon(100.0, 10.0);
-        Coupon amountCoupon = new AmountCoupon(80.0, 25.0);
+        Category category1 = new Category("category1");
+        Category subcategory1 = new Category("subcategory1", category1);
+        Category subcategory2 = new Category("subcategory2", category1);
+        Category category2 = new Category("category2");
 
-        shoppingCart.addCoupon(rateCoupon);
-        shoppingCart.addCoupon(amountCoupon);
+        Product product1 = new Product("product1", 5.0, subcategory1);
+        Product product2 = new Product("product2", 3.0, subcategory2);
+        Product product3 = new Product("product3", 20.0, category2);
+
+        shoppingCart.addProduct(2, product1);
+        shoppingCart.addProduct(3, product2);
+        shoppingCart.addProduct(5, product3);
 
         double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
 
-        assertEquals(65.0, totalAmount, 0.001);
+        assertEquals(119.0, totalAmount, 0.001);
     }
 
-    // TODO: rate amount ayri ayri
+    @Test
+    public void givenOneProductWithSingleCategoryWhenGetTotalAmountAfterDiscountCalledOnShoppingCartThenItShouldReturnProductPrice() {
+        Product product = createProduct("product", 1.0, "category");
+        shoppingCart.addProduct(2, product);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(2.0, totalAmount, 0.001);
+    }
+
+    @Test
+    public void givenShoppingCartWith1ProductWhenAddProductCalledWithSameProductAndQuantity1ThenAddProductReturns2() {
+        Product product = createProduct("product", 1.0, "category");
+        shoppingCart.addProduct(1, product);
+
+        int productQuantity = shoppingCart.addProduct(1, product);
+
+        assertEquals(2, productQuantity);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void givenShoppingCartWith1ProductWhenAddProductCalledWithInvalidQuantityThenItShouldThrowInvalidArgumentException() {
+        Product product = createProduct("product", 1.0, "category");
+        shoppingCart.addProduct(1, product);
+
+        shoppingCart.addProduct(-1, product);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void givenEmptyShoppingCartWhenAddProductCalledWithNullProductThenItShouldThrowInvalidArgumentException() {
+        shoppingCart.addProduct(1, null);
+    }
 
     @Test
     public void givenShoppingCartWithProductsAndDiscountsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmount() {
@@ -101,6 +136,7 @@ public class ShoppingCartTest {
 
         assertEquals(80.0, totalAmount, 0.001);
     }
+
     @Test
     public void givenAmountCampaignWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
         Campaign amountCampaign = new AmountCampaign(5.0, 5);
@@ -218,57 +254,48 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenProductsForDifferentCategoriesWithoutAnyDiscountsWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmount() {
-
-        Category category1 = new Category("category1");
-        Category subcategory1 = new Category("subcategory1", category1);
-        Category subcategory2 = new Category("subcategory2", category1);
-        Category category2 = new Category("category2");
-
-        Product product1 = new Product("product1", 5.0, subcategory1);
-        Product product2 = new Product("product2", 3.0, subcategory2);
-        Product product3 = new Product("product3", 20.0, category2);
-
-        shoppingCart.addProduct(2, product1);
-        shoppingCart.addProduct(3, product2);
-        shoppingCart.addProduct(5, product3);
-
-        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
-
-        assertEquals(119.0, totalAmount, 0.001);
-    }
-
-    @Test
-    public void givenOneProductWithSingleCategoryWhenGetTotalAmountAfterDiscountCalledOnShoppingCartThenItShouldReturnProductPrice() {
-        Product product = createProduct("product", 1.0, "category");
+    public void givenShoppingCartWithProductAndCouponsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmount() {
+        Category category = new Category("category");
+        Product product = new Product("product", 50.0, category);
         shoppingCart.addProduct(2, product);
 
+        Coupon rateCoupon = new RateCoupon(100.0, 10.0);
+        Coupon amountCoupon = new AmountCoupon(80.0, 25.0);
+
+        shoppingCart.addCoupon(rateCoupon);
+        shoppingCart.addCoupon(amountCoupon);
+
         double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
 
-        assertEquals(2.0, totalAmount, 0.001);
+        assertEquals(65.0, totalAmount, 0.001);
     }
 
     @Test
-    public void givenShoppingCartWith1ProductWhenAddProductCalledWithSameProductAndQuantity1ThenAddProductReturns2() {
-        Product product = createProduct("product", 1.0, "category");
+    public void givenShoppingCartWithProductAndRateCouponWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithDiscount() {
+        Category category = new Category("category");
+        Product product = new Product("product", 50.0, category);
         shoppingCart.addProduct(1, product);
 
-        int productQuantity = shoppingCart.addProduct(1, product);
+        Coupon rateCoupon = new RateCoupon(50.0, 10.0);
+        shoppingCart.addCoupon(rateCoupon);
 
-        assertEquals(2, productQuantity);
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(45.0, totalAmount, 0.001);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void givenShoppingCartWith1ProductWhenAddProductCalledWithInvalidQuantityThenItShouldThrowInvalidArgumentException() {
-        Product product = createProduct("product", 1.0, "category");
+    @Test
+    public void givenShoppingCartWithProductAndAmountCouponWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithDiscount() {
+        Category category = new Category("category");
+        Product product = new Product("product", 50.0, category);
         shoppingCart.addProduct(1, product);
 
-        shoppingCart.addProduct(-1, product);
-    }
+        Coupon amountCoupon = new AmountCoupon(50.0, 10.0);
+        shoppingCart.addCoupon(amountCoupon);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void givenEmptyShoppingCartWhenAddProductCalledWithNullProductThenItShouldThrowInvalidArgumentException() {
-        shoppingCart.addProduct(1, null);
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(40.0, totalAmount, 0.001);
     }
 
     @Test
