@@ -20,4 +20,8 @@ public class Product {
         return category;
     }
 
+    @Override
+    public String toString() {
+        return title + ": unitPrice: " + price + "TL";
+    }
 }

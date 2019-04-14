@@ -341,14 +341,14 @@ public class ShoppingCartTest {
                 "=== PRODUCTS ===\n" +
                 "- category1\n" +
                 "  - subcategory1\n" +
-                "    * product1: quantity: 3, unitPrice: 20.0TL, totalPrice: 100.0TL\n" +
+                "    * product1: unitPrice: 5.0TL, quantity: 3, totalPrice: 15.0TL\n" +
                 "  - subcategory2\n" +
-                "    * product2: quantity: 2, unitPrice: 20.0TL, totalPrice: 100.0TL\n" +
+                "    * product2: unitPrice: 3.0TL, quantity: 2, totalPrice: 6.0TL\n" +
                 "- category2\n" +
-                "  * product3: quantity: 5, unitPrice: 20.0TL, totalPrice: 100.0TL\n" +
+                "  * product3: unitPrice: 20.0TL, quantity: 5, totalPrice: 100.0TL\n" +
                 "=== CAMPAIGNS ===\n" +
                 "- category1\n" +
-                "  # rateCampaign: minProductQuantity: 3, rate: %25.0\n" +
+                "  # RateCampaign: minProductQuantity: 3, rate: %25.0\n" +
                 "  - subcategory1\n" +
                 "    # amountCampaign: minProductQuantity: 2, amount: 5.0TL\n" +
                 "=== COUPONS ===\n" +
@@ -358,5 +358,35 @@ public class ShoppingCartTest {
                 "totalAmount: 97.17TL\n" +
                 "deliveryCost: 15.99TL\n", shoppingCart.toString());
     }
+
+    @Test
+    public void givenProductWhenToStringCalledThenReturnProduct() {
+        assertEquals("product: unitPrice: 1.0TL", product.toString());
+    }
+
+    @Test
+    public void givenAmountCampaignWhenToStringCalledThenReturnAmountCampaign() {
+        Campaign amountCampaign = new AmountCampaign(5.0, 2);
+        assertEquals("AmountCampaign: minProductQuantity: 2, amount: 5.0TL", amountCampaign.toString());
+    }
+
+    @Test
+    public void givenRateCampaignWhenToStringCalledThenReturnRateCampaign() {
+        Campaign rateCampaign = new RateCampaign(25.0, 3);
+        assertEquals("RateCampaign: minProductQuantity: 3, rate: %25.0", rateCampaign.toString());
+    }
+
+    @Test
+    public void givenAmountCouponWhenToStringCalledThenReturnAmountCoupon() {
+        Coupon amountCoupon = new AmountCoupon(8.0, 2.5);
+        assertEquals("AmountCoupon: minPurchaseAmount: 8.0TL, amount: 2.5TL", amountCoupon.toString());
+    }
+
+    @Test
+    public void givenRateCouponWhenToStringCalledThenReturnRateCoupon() {
+        Coupon rateCoupon = new RateCoupon(10.0, 10.0);
+        assertEquals("RateCoupon: minPurchaseAmount: 10.0TL, rate: %10.0", rateCoupon.toString());
+    }
+
 
 }

@@ -20,4 +20,9 @@ public class RateCampaign implements Campaign {
         return totalAmount * (rate * 0.01);
     }
 
+    @Override
+    public String toString() {
+        return "RateCampaign: minProductQuantity: " + minProductQuantity + ", rate: %" + rate;
+    }
+
 }

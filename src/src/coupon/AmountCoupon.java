@@ -20,4 +20,9 @@ public class AmountCoupon implements Coupon {
         return amount;
     }
 
+    @Override
+    public String toString() {
+        return "AmountCoupon: minPurchaseAmount: " + minPurchaseAmount + "TL, amount: " + amount + "TL";
+    }
+
 }

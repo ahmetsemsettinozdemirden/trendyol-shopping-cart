@@ -20,4 +20,9 @@ public class AmountCampaign implements Campaign {
         return amount;
     }
 
+    @Override
+    public String toString() {
+        return "AmountCampaign: minProductQuantity: " + minProductQuantity + ", amount: " + amount + "TL";
+    }
+
 }

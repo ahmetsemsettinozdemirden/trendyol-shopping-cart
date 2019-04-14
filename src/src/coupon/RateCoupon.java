@@ -19,4 +19,10 @@ public class RateCoupon implements Coupon {
     public double getDiscount(double totalAmount) {
         return totalAmount * (rate * 0.01);
     }
+
+    @Override
+    public String toString() {
+        return "RateCoupon: minPurchaseAmount: " + minPurchaseAmount + "TL, rate: %" + rate;
+    }
+
 }
