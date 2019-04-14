@@ -9,7 +9,6 @@ import src.campaign.RateCampaign;
 import src.coupon.AmountCoupon;
 import src.coupon.Coupon;
 import src.coupon.RateCoupon;
-import src.delivery.DeliveryCostCalculator;
 import src.delivery.FixedDeliveryCostCalculator;
 
 import static org.junit.Assert.assertEquals;
@@ -42,6 +41,8 @@ public class ShoppingCartTest {
         assertEquals(65.0, totalAmount, 0.001);
     }
 
+    // TODO: rate amount ayri ayri
+
     @Test
     public void givenShoppingCartWithProductsAndDiscountsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmount() {
 
@@ -69,6 +70,37 @@ public class ShoppingCartTest {
         assertEquals(110.75, totalAmount, 0.001);
     }
 
+    @Test
+    public void givenProductsForSubcategoriesWithRateCampaignAppliedToParentCategoryWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
+        Campaign rateCampaign = new RateCampaign(20.0, 5);
+        Category category = new Category("category");
+        Category subcategory = new Category("subcategory", category);
+        category.addCampaign(rateCampaign);
+        Product product = new Product("product", 10.0, category);
+        Product subproduct = new Product("subproduct", 20.0, subcategory);
+        shoppingCart.addProduct(2, product);
+        shoppingCart.addProduct(3, subproduct);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(64.0, totalAmount, 0.001);
+    }
+
+    @Test
+    public void givenProductsForSubcategoriesWithRateCampaignAppliedToSubcategoryWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithoutDiscountApplied() {
+        Campaign rateCampaign = new RateCampaign(20.0, 6);
+        Category category = new Category("category");
+        Category subcategory = new Category("subcategory", category);
+        category.addCampaign(rateCampaign);
+        Product product = new Product("product", 10.0, category);
+        Product subproduct = new Product("subproduct", 20.0, subcategory);
+        shoppingCart.addProduct(2, product);
+        shoppingCart.addProduct(3, subproduct);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(80.0, totalAmount, 0.001);
+    }
     @Test
     public void givenAmountCampaignWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
         Campaign amountCampaign = new AmountCampaign(5.0, 5);
@@ -249,14 +281,19 @@ public class ShoppingCartTest {
         Product product2 = new Product("product2", 3.0, category1);
         Product product3 = new Product("product3", 20.0, category2);
 
-        ShoppingCart shoppingCart = new ShoppingCart(new FixedDeliveryCostCalculator(1.0, 1.0));
+        ShoppingCart shoppingCart = new ShoppingCart(new FixedDeliveryCostCalculator(2.0, 3.0));
         shoppingCart.addProduct(2, product1);
         shoppingCart.addProduct(3, product2);
         shoppingCart.addProduct(5, product3);
 
         double deliveryCost = shoppingCart.getDeliveryCost();
 
-        assertEquals(7.99, deliveryCost, 0.001);
+        assertEquals(15.99, deliveryCost, 0.001);
+    }
+
+    @Test
+    public void givenEmptyShoppingCartWhenGetDeliveryCostCalledThenItShouldReturnFixedCost() {
+        assertEquals(2.99, shoppingCart.getDeliveryCost(), 0.001);
     }
 
     private Product createProduct(String productTitle, double productPrice, String categoryTitle) {
