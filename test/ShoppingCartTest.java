@@ -65,6 +65,23 @@ public class ShoppingCartTest {
     }
 
     @Test
+    public void givenAmountCampaignWhenAddCampaignCalledThenItReturnsTrue() {
+        Campaign amountCampaign = new AmountCampaign(10.0, 5);
+        Category category = new Category("category");
+
+        assertTrue(category.addCampaign(amountCampaign));
+    }
+
+    @Test
+    public void givenAmountCampaignWithCategoryAlreadyAddedWhenAddCampaignCalledThenItReturnsFalse() {
+        Campaign amountCampaign = new AmountCampaign(10.0, 5);
+        Category category = new Category("category");
+        category.addCampaign(amountCampaign);
+
+        assertFalse(category.addCampaign(amountCampaign));
+    }
+
+    @Test
     public void givenProductsForDifferentCategoriesWithoutAnyDiscountsWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmount() {
 
         Category category1 = new Category("category1");
