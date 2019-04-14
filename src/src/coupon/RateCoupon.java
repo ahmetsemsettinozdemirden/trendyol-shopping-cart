@@ -22,7 +22,7 @@ public class RateCoupon implements Coupon {
 
     @Override
     public String toString() {
-        return "RateCoupon: minPurchaseAmount: " + minPurchaseAmount + "TL, rate: %" + rate;
+        return "RateCoupon: minPurchaseAmount: " + String.format("%.2f", minPurchaseAmount) + "TL, rate: %" + rate;
     }
 
 }

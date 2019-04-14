@@ -22,7 +22,7 @@ public class AmountCoupon implements Coupon {
 
     @Override
     public String toString() {
-        return "AmountCoupon: minPurchaseAmount: " + minPurchaseAmount + "TL, amount: " + amount + "TL";
+        return "AmountCoupon: minPurchaseAmount: " + String.format("%.2f", minPurchaseAmount) + "TL, amount: " + String.format("%.2f", amount) + "TL";
     }
 
 }

@@ -321,7 +321,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenShoppingCartWhenPrintCalledItReturnsShoppingCartOutput() {
+    public void givenShoppingCartWhenToStringCalledItReturnsShoppingCartOutput() {
         Campaign rateCampaign = new RateCampaign(25.0, 3);
         Campaign amountCampaign = new AmountCampaign(5.0, 2);
         category1.addCampaign(rateCampaign);
@@ -339,35 +339,73 @@ public class ShoppingCartTest {
 
         assertEquals("" +
                 "=== PRODUCTS ===\n" +
-                "- category1\n" +
-                "  - subcategory1\n" +
-                "    * product1: unitPrice: 5.0TL, quantity: 3, totalPrice: 15.0TL\n" +
-                "  - subcategory2\n" +
-                "    * product2: unitPrice: 3.0TL, quantity: 2, totalPrice: 6.0TL\n" +
+                "- category1 -> subcategory1\n" +
+                "  * product1: unitPrice: 5.00TL, quantity: 3, totalPrice: 15.00TL\n" +
+                "- category1 -> subcategory2\n" +
+                "  * product2: unitPrice: 3.00TL, quantity: 2, totalPrice: 6.00TL\n" +
                 "- category2\n" +
-                "  * product3: unitPrice: 20.0TL, quantity: 5, totalPrice: 100.0TL\n" +
+                "  * product3: unitPrice: 20.00TL, quantity: 5, totalPrice: 100.00TL\n" +
                 "=== CAMPAIGNS ===\n" +
                 "- category1\n" +
                 "  # RateCampaign: minProductQuantity: 3, rate: %25.0\n" +
-                "  - subcategory1\n" +
-                "    # amountCampaign: minProductQuantity: 2, amount: 5.0TL\n" +
+                "- category1 -> subcategory1\n" +
+                "  # AmountCampaign: minProductQuantity: 2, amount: 5.00TL\n" +
                 "=== COUPONS ===\n" +
-                "- rateCoupon: minPurchaseAmount: 10.0TL, rate: %10.0\n" +
-                "- amountCoupon: minPurchaseAmount: 8.0TL, amount: 2.5TL\n" +
+                "- RateCoupon: minPurchaseAmount: 10.00TL, rate: %10.0\n" +
+                "- AmountCoupon: minPurchaseAmount: 8.00TL, amount: 2.50TL\n" +
                 "=== SUMMARY ===\n" +
-                "totalAmount: 97.17TL\n" +
-                "deliveryCost: 15.99TL\n", shoppingCart.toString());
+                "totalAmount: 97.18TL\n" +
+                "deliveryCost: 17.99TL\n", shoppingCart.toString());
+    }
+
+    @Test
+    public void givenShoppingCartWithOneForEachProductCampaignAndCouponWhenPrintCalledThenReturnShoppingCartOutput() {
+
+        Campaign amountCampaign = new AmountCampaign(1.0, 2);
+        category.addCampaign(amountCampaign);
+
+        shoppingCart.addProduct(10, product);
+
+        Coupon amountCoupon = new AmountCoupon(8.0, 2.5);
+        shoppingCart.addCoupon(amountCoupon);
+
+        assertEquals("" +
+                "=== PRODUCTS ===\n" +
+                "- category\n" +
+                "  * product: unitPrice: 1.00TL, quantity: 10, totalPrice: 10.00TL\n" +
+                "=== CAMPAIGNS ===\n" +
+                "- category\n" +
+                "  # AmountCampaign: minProductQuantity: 2, amount: 1.00TL\n" +
+                "=== COUPONS ===\n" +
+                "- AmountCoupon: minPurchaseAmount: 8.00TL, amount: 2.50TL\n" +
+                "=== SUMMARY ===\n" +
+                "totalAmount: 6.50TL\n" +
+                "deliveryCost: 7.99TL\n", shoppingCart.toString());
+    }
+
+    @Test
+    public void givenEmptyShoppingCartWhenPrintCalledThenReturnEmptyShoppingCartOutput() {
+        assertEquals("" +
+                "=== PRODUCTS ===\n" +
+                "no products.\n" +
+                "=== CAMPAIGNS ===\n" +
+                "no campaigns.\n" +
+                "=== COUPONS ===\n" +
+                "no coupons.\n" +
+                "=== SUMMARY ===\n" +
+                "totalAmount: 0.00TL\n" +
+                "deliveryCost: 2.99TL\n", shoppingCart.toString());
     }
 
     @Test
     public void givenProductWhenToStringCalledThenReturnProduct() {
-        assertEquals("product: unitPrice: 1.0TL", product.toString());
+        assertEquals("product: unitPrice: 1.00TL", product.toString());
     }
 
     @Test
     public void givenAmountCampaignWhenToStringCalledThenReturnAmountCampaign() {
         Campaign amountCampaign = new AmountCampaign(5.0, 2);
-        assertEquals("AmountCampaign: minProductQuantity: 2, amount: 5.0TL", amountCampaign.toString());
+        assertEquals("AmountCampaign: minProductQuantity: 2, amount: 5.00TL", amountCampaign.toString());
     }
 
     @Test
@@ -379,13 +417,13 @@ public class ShoppingCartTest {
     @Test
     public void givenAmountCouponWhenToStringCalledThenReturnAmountCoupon() {
         Coupon amountCoupon = new AmountCoupon(8.0, 2.5);
-        assertEquals("AmountCoupon: minPurchaseAmount: 8.0TL, amount: 2.5TL", amountCoupon.toString());
+        assertEquals("AmountCoupon: minPurchaseAmount: 8.00TL, amount: 2.50TL", amountCoupon.toString());
     }
 
     @Test
     public void givenRateCouponWhenToStringCalledThenReturnRateCoupon() {
         Coupon rateCoupon = new RateCoupon(10.0, 10.0);
-        assertEquals("RateCoupon: minPurchaseAmount: 10.0TL, rate: %10.0", rateCoupon.toString());
+        assertEquals("RateCoupon: minPurchaseAmount: 10.00TL, rate: %10.0", rateCoupon.toString());
     }
 
 

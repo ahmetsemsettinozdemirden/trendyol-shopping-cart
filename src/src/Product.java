@@ -22,6 +22,6 @@ public class Product {
 
     @Override
     public String toString() {
-        return title + ": unitPrice: " + price + "TL";
+        return title + ": unitPrice: " + String.format("%.2f", price) + "TL";
     }
 }

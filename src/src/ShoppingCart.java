@@ -92,12 +92,16 @@ public class ShoppingCart {
         return getTotalAmountAfterCampaignDiscount() - getCouponDiscount();
     }
 
-    private int getNumberOfDeliveries() {
+    private Set<Category> getCategories() {
         Set<Category> categories = new HashSet<>();
         for (Product product: productQuantities.keySet()) {
             categories.add(product.getCategory());
         }
-        return categories.size();
+        return categories;
+    }
+
+    private int getNumberOfDeliveries() {
+        return getCategories().size();
     }
 
     private int getNumberOfProducts() {
@@ -110,6 +114,60 @@ public class ShoppingCart {
 
     @Override
     public String toString() {
-        return "";
+        String productsOutput = getProductsAsText();
+        String campaignsOutput = getCampaignsAsText();
+        String couponsOutput = getCouponsAsText();
+        return "=== PRODUCTS ===\n" +
+                ("".equals(productsOutput) ? "no products.\n" : productsOutput) +
+                "=== CAMPAIGNS ===\n" +
+                ("".equals(campaignsOutput) ? "no campaigns.\n" : campaignsOutput) +
+                "=== COUPONS ===\n" +
+                ("".equals(couponsOutput) ? "no coupons.\n" : couponsOutput) +
+                "=== SUMMARY ===\n" +
+                "totalAmount: " + String.format("%.2f", getTotalAmountAfterDiscounts()) + "TL\n" +
+                "deliveryCost: " + String.format("%.2f", getDeliveryCost()) + "TL\n";
     }
+
+    private String getProductsAsText() {
+        String productsStr = "";
+        List<Category> categories = new ArrayList<>(getCategories());
+        categories.sort(null);
+        for (Category category: categories) {
+            productsStr += "- " + category + "\n";
+            List<Product> products = findProducts(category);
+            for (Product product: products) {
+                productsStr += "  * " + product +
+                        ", quantity: " + productQuantities.get(product) +
+                        ", totalPrice: " + String.format("%.2f", (productQuantities.get(product) * product.getPrice())) + "TL\n";
+            }
+        }
+        return productsStr;
+    }
+
+    private String getCampaignsAsText() {
+        String campaignsStr = "";
+        for (Category category: findAllCategories()) {
+
+            List<Product> products = findProducts(category);
+            int productQuantity = products.stream().mapToInt(product -> productQuantities.get(product)).sum();
+            List<Campaign> campaigns = category.getAppliedCampaigns(productQuantity);
+
+            if (!campaigns.isEmpty()) {
+                campaignsStr += "- " + category + "\n";
+                for (Campaign campaign : campaigns) {
+                    campaignsStr += "  # " + campaign + "\n";
+                }
+            }
+        }
+        return campaignsStr;
+    }
+
+    private String getCouponsAsText() {
+        String couponsStr = "";
+        for (Coupon coupon: coupons) {
+            couponsStr += "- " + coupon.toString() + "\n";
+        }
+        return couponsStr;
+    }
+
 }

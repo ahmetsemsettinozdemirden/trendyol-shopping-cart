@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Category {
+public class Category implements Comparable<Category> {
 
     private String title;
     private Category parentCategory;
@@ -46,4 +46,13 @@ public class Category {
         return categories;
     }
 
+    @Override
+    public String toString() {
+        return (parentCategory != null ? parentCategory.toString() + " -> " : "") + title;
+    }
+
+    @Override
+    public int compareTo(Category category) {
+        return this.toString().compareTo(category.toString());
+    }
 }
