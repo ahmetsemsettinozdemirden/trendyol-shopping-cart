@@ -22,7 +22,8 @@ public class AmountCampaign implements Campaign {
 
     @Override
     public String toString() {
-        return "AmountCampaign: minProductQuantity: " + minProductQuantity + ", amount: " + String.format("%.2f", amount) + "TL";
+        return "AmountCampaign: minProductQuantity: " + minProductQuantity +
+                ", amount: " + String.format("%.2f", amount) + "TL";
     }
 
 }

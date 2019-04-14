@@ -64,11 +64,9 @@ public class ShoppingCart {
     public double getCampaignDiscount() {
         double totalDiscount = 0;
         for (Category category: findAllCategories()) {
-
             List<Product> products = findProducts(category);
             int productQuantity = calculateProductQuantity(products);
             List<Campaign> campaigns = category.getAppliedCampaigns(productQuantity);
-
             for (Campaign campaign: campaigns) {
                 totalDiscount += campaign.getDiscount(calculateTotalPrice(products));
             }
