@@ -16,4 +16,8 @@ public class Product {
         return price;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
 }

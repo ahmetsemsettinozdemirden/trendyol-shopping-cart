@@ -1,7 +1,14 @@
 package src;
 
+import src.campaign.Campaign;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ShoppingCart {
 
@@ -17,13 +24,26 @@ public class ShoppingCart {
         if (product == null)
             throw new IllegalArgumentException("product is null");
 
-        if (!productQuantities.containsKey(product)) {
+        if (!productQuantities.containsKey(product))
             productQuantities.put(product, quantity);
-        } else {
+        else
             productQuantities.replace(product, productQuantities.get(product) + quantity);
-        }
 
         return productQuantities.get(product);
+    }
+
+    private Set<Category> findAllCategories() {
+        Set<Category> categories = new HashSet<>();
+        for (Product product: productQuantities.keySet()) {
+            categories.addAll(product.getCategory().getAllParents());
+        }
+        return categories;
+    }
+
+    private List<Product> findProducts(Category category) {
+        return productQuantities.keySet().stream()
+                .filter(product -> product.getCategory().inCategory(category))
+                .collect(Collectors.toList());
     }
 
     private double getTotalAmount() {
@@ -36,8 +56,22 @@ public class ShoppingCart {
         return totalAmount;
     }
 
+    public double getCampaignDiscount() {
+        double totalDiscount = 0;
+        for (Category category: findAllCategories()) {
+            List<Product> products = findProducts(category);
+            int productQuantity = products.stream().mapToInt(product -> productQuantities.get(product)).sum();
+            List<Campaign> campaigns = category.getAppliedCampaigns(productQuantity);
+            double totalPrice = products.stream().mapToDouble(product -> productQuantities.get(product) * product.getPrice()).sum();
+            for (Campaign campaign: campaigns) {
+                totalDiscount += campaign.getDiscount(totalPrice);
+            }
+        }
+        return totalDiscount;
+    }
+
     public double getTotalAmountAfterDiscounts() {
-        return getTotalAmount();
+        return getTotalAmount() - getCampaignDiscount();
     }
 
 }

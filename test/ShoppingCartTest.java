@@ -23,8 +23,8 @@ public class ShoppingCartTest {
     @Test
     public void givenShoppingCartWithProductsAndDiscountsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmount() {
 
-        Campaign rateCampaign = new RateCampaign(20.0, 3);
-        Campaign amountCampaign = new AmountCampaign(5.0, 5);
+        Campaign rateCampaign = new RateCampaign(25.0, 3);
+        Campaign amountCampaign = new AmountCampaign(5.0, 2);
 
         Category category1 = new Category("category1");
         Category subcategory1 = new Category("subcategory1", category1);
@@ -38,13 +38,95 @@ public class ShoppingCartTest {
         Product product2 = new Product("product2", 3.0, subcategory2);
         Product product3 = new Product("product3", 20.0, category2);
 
-        shoppingCart.addProduct(2, product1);
-        shoppingCart.addProduct(3, product2);
+        shoppingCart.addProduct(3, product1);
+        shoppingCart.addProduct(2, product2);
         shoppingCart.addProduct(5, product3);
 
         double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
 
-        assertEquals(106.90, totalAmount, 0.001);
+        assertEquals(110.75, totalAmount, 0.001);
+    }
+
+    @Test
+    public void givenAmountCampaignWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
+        Campaign amountCampaign = new AmountCampaign(5.0, 5);
+        Category category = new Category("category");
+        category.addCampaign(amountCampaign);
+        Product product = new Product("product", 10.0, category);
+        shoppingCart.addProduct(5, product);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(45.0, totalAmount, 0.001);
+    }
+
+    @Test
+    public void given2DifferentAmountCampaignsWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
+        Campaign amountCampaign1 = new AmountCampaign(5.0, 5);
+        Campaign amountCampaign2 = new AmountCampaign(15.0, 5);
+        Category category = new Category("category");
+        category.addCampaign(amountCampaign1);
+        category.addCampaign(amountCampaign2);
+        Product product = new Product("product", 10.0, category);
+        shoppingCart.addProduct(5, product);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(30.0, totalAmount, 0.001);
+    }
+
+    @Test
+    public void givenProductWhichIsLessThenMinimumProductQuantityForCategoryWithAmountCampaignAppliedWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithoutDiscountApplied() {
+        Campaign amountCampaign = new AmountCampaign(5.0, 6);
+        Category category = new Category("category");
+        category.addCampaign(amountCampaign);
+        Product product = new Product("product", 10.0, category);
+        shoppingCart.addProduct(5, product);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(50.0, totalAmount, 0.001);
+    }
+
+    @Test
+    public void givenRateCampaignWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
+        Campaign rateCampaign = new RateCampaign(10.0, 5);
+        Category category = new Category("category");
+        category.addCampaign(rateCampaign);
+        Product product = new Product("product", 10.0, category);
+        shoppingCart.addProduct(5, product);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(45.0, totalAmount, 0.001);
+    }
+
+    @Test
+    public void given2DifferentRateCampaignsWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
+        Campaign rateCampaign1 = new RateCampaign(10.0, 5);
+        Campaign rateCampaign2 = new RateCampaign(30.0, 5);
+        Category category = new Category("category");
+        category.addCampaign(rateCampaign1);
+        category.addCampaign(rateCampaign2);
+        Product product = new Product("product", 10.0, category);
+        shoppingCart.addProduct(5, product);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(30.0, totalAmount, 0.001);
+    }
+
+    @Test
+    public void givenProductWhichIsLessThenMinimumProductQuantityForCategoryWithRateCampaignAppliedWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithoutDiscountApplied() {
+        Campaign rateCampaign = new RateCampaign(10.0, 6);
+        Category category = new Category("category");
+        category.addCampaign(rateCampaign);
+        Product product = new Product("product", 10.0, category);
+        shoppingCart.addProduct(5, product);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(50.0, totalAmount, 0.001);
     }
 
     @Test
