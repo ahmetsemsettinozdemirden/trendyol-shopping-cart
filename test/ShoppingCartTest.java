@@ -6,6 +6,9 @@ import src.ShoppingCart;
 import src.campaign.AmountCampaign;
 import src.campaign.Campaign;
 import src.campaign.RateCampaign;
+import src.coupon.AmountCoupon;
+import src.coupon.Coupon;
+import src.coupon.RateCoupon;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -18,6 +21,23 @@ public class ShoppingCartTest {
     @Before
     public void setUp() {
         shoppingCart = new ShoppingCart();
+    }
+
+    @Test
+    public void givenShoppingCartWithProductAndCouponsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmount() {
+        Category category = new Category("category");
+        Product product = new Product("product", 50.0, category);
+        shoppingCart.addProduct(2, product);
+
+        Coupon rateCoupon = new RateCoupon(100.0, 10.0);
+        Coupon amountCoupon = new AmountCoupon(80.0, 25.0);
+
+        shoppingCart.addCoupon(rateCoupon);
+        shoppingCart.addCoupon(amountCoupon);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(65.0, totalAmount, 0.001);
     }
 
     @Test

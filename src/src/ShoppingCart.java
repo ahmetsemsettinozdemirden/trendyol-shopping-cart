@@ -1,6 +1,7 @@
 package src;
 
 import src.campaign.Campaign;
+import src.coupon.Coupon;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,9 +14,11 @@ import java.util.stream.Collectors;
 public class ShoppingCart {
 
     private Map<Product, Integer> productQuantities;
+    private List<Coupon> coupons;
 
     public ShoppingCart() {
         this.productQuantities = new HashMap<>();
+        this.coupons = new ArrayList<>();
     }
 
     public int addProduct(int quantity, Product product) {
@@ -30,6 +33,10 @@ public class ShoppingCart {
             productQuantities.replace(product, productQuantities.get(product) + quantity);
 
         return productQuantities.get(product);
+    }
+
+    public boolean addCoupon(Coupon coupon) {
+        return coupon.isApplicable(getTotalAmountAfterDiscounts()) && coupons.add(coupon);
     }
 
     private Set<Category> findAllCategories() {
@@ -70,8 +77,16 @@ public class ShoppingCart {
         return totalDiscount;
     }
 
-    public double getTotalAmountAfterDiscounts() {
+    private double getTotalAmountAfterCampaignDiscount() {
         return getTotalAmount() - getCampaignDiscount();
+    }
+
+    public double getCouponDiscount() {
+        return coupons.stream().mapToDouble(coupon -> coupon.getDiscount(getTotalAmountAfterCampaignDiscount())).sum();
+    }
+
+    public double getTotalAmountAfterDiscounts() {
+        return getTotalAmountAfterCampaignDiscount() - getCouponDiscount();
     }
 
 }
