@@ -83,6 +83,19 @@ public class ShoppingCartTest {
         assertEquals(2, productQuantity);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void givenShoppingCartWith1ProductWhenAddProductCalledWithInvalidQuantityThenItShouldThrowInvalidArgumentException() {
+        Product product = createProduct("product", 1.0, "category");
+        shoppingCart.addProduct(1, product);
+
+        shoppingCart.addProduct(-1, product);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void givenEmptyShoppingCartWhenAddProductCalledWithNullProductThenItShouldThrowInvalidArgumentException() {
+        shoppingCart.addProduct(1, null);
+    }
+
     private Product createProduct(String productTitle, double productPrice, String categoryTitle) {
         return new Product(productTitle, productPrice, new Category(categoryTitle));
     }
@@ -144,11 +157,17 @@ public class ShoppingCartTest {
         }
 
         public int addProduct(int quantity, Product product) {
+            if (quantity <= 0)
+                throw new IllegalArgumentException("invalid quantity: " + quantity);
+            if (product == null)
+                throw new IllegalArgumentException("product is null");
+
             if (!productQuantities.containsKey(product)) {
                 productQuantities.put(product, quantity);
             } else {
                 productQuantities.replace(product, productQuantities.get(product) + quantity);
             }
+
             return productQuantities.get(product);
         }
 
