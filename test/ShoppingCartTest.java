@@ -1,8 +1,11 @@
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
+import src.Category;
+import src.Product;
+import src.ShoppingCart;
+import src.campaign.AmountCampaign;
+import src.campaign.Campaign;
+import src.campaign.RateCampaign;
 
 import static org.junit.Assert.assertEquals;
 
@@ -100,91 +103,5 @@ public class ShoppingCartTest {
         return new Product(productTitle, productPrice, new Category(categoryTitle));
     }
 
-    interface Campaign { }
-
-    class RateCampaign implements Campaign {
-        public RateCampaign(double rate, int quantity) { }
-    }
-
-    class AmountCampaign implements Campaign {
-        public AmountCampaign(double amount, int quantity) { }
-    }
-
-    class Category {
-
-        private String title;
-        private Category parentCategory;
-
-        public Category(String title) {
-            this(title, null);
-        }
-
-        public Category(String title, Category parentCategory) {
-            this.title = title;
-            this.parentCategory = parentCategory;
-        }
-
-        public boolean addCampaign(Campaign campaign) {
-            return true;
-        }
-
-    }
-
-    class Product {
-
-        private String title;
-        private double price;
-        private Category category;
-
-        public Product(String title, double price, Category category) {
-            this.title = title;
-            this.price = price;
-            this.category = category;
-        }
-
-        public double getPrice() {
-            return price;
-        }
-
-    }
-
-    class ShoppingCart {
-
-        private Map<Product, Integer> productQuantities;
-
-        public ShoppingCart() {
-            this.productQuantities = new HashMap<>();
-        }
-
-        public int addProduct(int quantity, Product product) {
-            if (quantity <= 0)
-                throw new IllegalArgumentException("invalid quantity: " + quantity);
-            if (product == null)
-                throw new IllegalArgumentException("product is null");
-
-            if (!productQuantities.containsKey(product)) {
-                productQuantities.put(product, quantity);
-            } else {
-                productQuantities.replace(product, productQuantities.get(product) + quantity);
-            }
-
-            return productQuantities.get(product);
-        }
-
-        private double getTotalAmount() {
-            double totalAmount = 0.0;
-            for (Map.Entry<Product, Integer> entry: productQuantities.entrySet()){
-                Product product = entry.getKey();
-                int quantity = entry.getValue();
-                totalAmount += product.getPrice() * quantity;
-            }
-            return totalAmount;
-        }
-
-        public double getTotalAmountAfterDiscounts() {
-            return getTotalAmount();
-        }
-
-    }
 
 }
