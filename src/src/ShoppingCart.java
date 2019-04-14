@@ -2,6 +2,7 @@ package src;
 
 import src.campaign.Campaign;
 import src.coupon.Coupon;
+import src.delivery.DeliveryCostCalculator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,10 +14,12 @@ import java.util.stream.Collectors;
 
 public class ShoppingCart {
 
+    private DeliveryCostCalculator deliveryCostCalculator;
     private Map<Product, Integer> productQuantities;
     private List<Coupon> coupons;
 
-    public ShoppingCart() {
+    public ShoppingCart(DeliveryCostCalculator deliveryCostCalculator) {
+        this.deliveryCostCalculator = deliveryCostCalculator;
         this.productQuantities = new HashMap<>();
         this.coupons = new ArrayList<>();
     }
@@ -76,17 +79,32 @@ public class ShoppingCart {
         }
         return totalDiscount;
     }
+    public double getCouponDiscount() {
+        return coupons.stream().mapToDouble(coupon -> coupon.getDiscount(getTotalAmountAfterCampaignDiscount())).sum();
+    }
 
     private double getTotalAmountAfterCampaignDiscount() {
         return getTotalAmount() - getCampaignDiscount();
     }
 
-    public double getCouponDiscount() {
-        return coupons.stream().mapToDouble(coupon -> coupon.getDiscount(getTotalAmountAfterCampaignDiscount())).sum();
-    }
-
     public double getTotalAmountAfterDiscounts() {
         return getTotalAmountAfterCampaignDiscount() - getCouponDiscount();
+    }
+
+    private int getNumberOfDeliveries() {
+        Set<Category> categories = new HashSet<>();
+        for (Product product: productQuantities.keySet()) {
+            categories.add(product.getCategory());
+        }
+        return categories.size();
+    }
+
+    private int getNumberOfProducts() {
+        return productQuantities.entrySet().size();
+    }
+
+    public double getDeliveryCost() {
+        return deliveryCostCalculator.calculateFor(getNumberOfDeliveries(), getNumberOfProducts());
     }
 
 }

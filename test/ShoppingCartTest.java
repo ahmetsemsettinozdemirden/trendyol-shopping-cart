@@ -9,6 +9,8 @@ import src.campaign.RateCampaign;
 import src.coupon.AmountCoupon;
 import src.coupon.Coupon;
 import src.coupon.RateCoupon;
+import src.delivery.DeliveryCostCalculator;
+import src.delivery.FixedDeliveryCostCalculator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -20,7 +22,7 @@ public class ShoppingCartTest {
 
     @Before
     public void setUp() {
-        shoppingCart = new ShoppingCart();
+        shoppingCart = new ShoppingCart(new FixedDeliveryCostCalculator(1.0, 1.0));
     }
 
     @Test
@@ -235,6 +237,26 @@ public class ShoppingCartTest {
     @Test(expected = IllegalArgumentException.class)
     public void givenEmptyShoppingCartWhenAddProductCalledWithNullProductThenItShouldThrowInvalidArgumentException() {
         shoppingCart.addProduct(1, null);
+    }
+
+    @Test
+    public void givenShoppingCartWhenGetDeliveryCostCalledThenItShouldReturnDeliveryCost() {
+
+        Category category1 = new Category("category1");
+        Category category2 = new Category("category2");
+
+        Product product1 = new Product("product1", 5.0, category1);
+        Product product2 = new Product("product2", 3.0, category1);
+        Product product3 = new Product("product3", 20.0, category2);
+
+        ShoppingCart shoppingCart = new ShoppingCart(new FixedDeliveryCostCalculator(1.0, 1.0));
+        shoppingCart.addProduct(2, product1);
+        shoppingCart.addProduct(3, product2);
+        shoppingCart.addProduct(5, product3);
+
+        double deliveryCost = shoppingCart.getDeliveryCost();
+
+        assertEquals(7.99, deliveryCost, 0.001);
     }
 
     private Product createProduct(String productTitle, double productPrice, String categoryTitle) {
