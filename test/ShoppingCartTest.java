@@ -65,12 +65,26 @@ public class ShoppingCartTest {
 
     @Test
     public void givenOneProductWithSingleCategoryWhenGetTotalAmountAfterDiscountCalledOnShoppingCartThenItShouldReturnProductPrice() {
-        Product product = new Product("product", 1.0, new Category("category"));
-        shoppingCart.addProduct(1, product);
+        Product product = createProduct("product", 1.0, "category");
+        shoppingCart.addProduct(2, product);
 
         double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
 
-        assertEquals(1.0, totalAmount, 0.001);
+        assertEquals(2.0, totalAmount, 0.001);
+    }
+
+    @Test
+    public void givenShoppingCartWith1ProductWhenAddProductCalledWithSameProductAndQuantity1ThenAddProductReturns2() {
+        Product product = createProduct("product", 1.0, "category");
+        shoppingCart.addProduct(1, product);
+
+        int productQuantity = shoppingCart.addProduct(1, product);
+
+        assertEquals(2, productQuantity);
+    }
+
+    private Product createProduct(String productTitle, double productPrice, String categoryTitle) {
+        return new Product(productTitle, productPrice, new Category(categoryTitle));
     }
 
     interface Campaign { }
