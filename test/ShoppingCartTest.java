@@ -8,6 +8,8 @@ import src.campaign.Campaign;
 import src.campaign.RateCampaign;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ShoppingCartTest {
 
@@ -43,6 +45,23 @@ public class ShoppingCartTest {
         double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
 
         assertEquals(106.90, totalAmount, 0.001);
+    }
+
+    @Test
+    public void givenRateCampaignWhenAddCampaignCalledThenItReturnsTrue() {
+        Campaign rateCampaign = new RateCampaign(20.0, 5);
+        Category category = new Category("category");
+
+        assertTrue(category.addCampaign(rateCampaign));
+    }
+
+    @Test
+    public void givenRateCampaignWithCategoryAlreadyAddedWhenAddCampaignCalledThenItReturnsFalse() {
+        Campaign rateCampaign = new RateCampaign(20.0, 5);
+        Category category = new Category("category");
+        category.addCampaign(rateCampaign);
+
+        assertFalse(category.addCampaign(rateCampaign));
     }
 
     @Test
@@ -102,6 +121,5 @@ public class ShoppingCartTest {
     private Product createProduct(String productTitle, double productPrice, String categoryTitle) {
         return new Product(productTitle, productPrice, new Category(categoryTitle));
     }
-
 
 }
