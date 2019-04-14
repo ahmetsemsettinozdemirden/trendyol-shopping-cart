@@ -39,7 +39,9 @@ public class ShoppingCart {
     }
 
     public boolean addCoupon(Coupon coupon) {
-        return coupon.isApplicable(getTotalAmountAfterDiscounts()) && coupons.add(coupon);
+        if(coupon.isApplicable(getTotalAmountAfterDiscounts()))
+            return coupons.add(coupon);
+        return false;
     }
 
     private Set<Category> findAllCategories() {
@@ -69,9 +71,11 @@ public class ShoppingCart {
     public double getCampaignDiscount() {
         double totalDiscount = 0;
         for (Category category: findAllCategories()) {
+
             List<Product> products = findProducts(category);
             int productQuantity = products.stream().mapToInt(product -> productQuantities.get(product)).sum();
             List<Campaign> campaigns = category.getAppliedCampaigns(productQuantity);
+
             double totalPrice = products.stream().mapToDouble(product -> productQuantities.get(product) * product.getPrice()).sum();
             for (Campaign campaign: campaigns) {
                 totalDiscount += campaign.getDiscount(totalPrice);

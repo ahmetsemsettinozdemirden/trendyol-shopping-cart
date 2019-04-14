@@ -82,6 +82,16 @@ public class ShoppingCartTest {
         assertEquals(2, productQuantity);
     }
 
+    @Test
+    public void givenEmptyShoppingCartWhenAddProductCalledThenItShouldAddProduct() {
+        shoppingCart.addProduct(1, product);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void givenEmptyShoppingCartWhenAddProductCalledWithInvalidQuantityThenItShouldThrowInvalidArgumentException() {
+        shoppingCart.addProduct(0, product);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void givenShoppingCartWith1ProductWhenAddProductCalledWithInvalidQuantityThenItShouldThrowInvalidArgumentException() {
         shoppingCart.addProduct(1, product);
@@ -271,6 +281,34 @@ public class ShoppingCartTest {
         double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
 
         assertEquals(8.0, totalAmount, 0.001);
+    }
+
+    @Test
+    public void givenShoppingCartWithProductAndAmountCouponOverMinPurchaseAmountWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithoutDiscount() {
+        shoppingCart.addProduct(10, product);
+
+        Coupon amountCoupon = new AmountCoupon(20.0, 2.0);
+        shoppingCart.addCoupon(amountCoupon);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(10.0, totalAmount, 0.001);
+    }
+
+    @Test
+    public void givenShoppingCartWithAmountCouponUnderMinPurchaseAmountWhenAddCouponCalledThenItShouldReturnTrue() {        shoppingCart.addProduct(10, product);
+        shoppingCart.addProduct(10, product);
+
+        Coupon amountCoupon = new AmountCoupon(10.0, 2.0);
+
+        assertTrue(shoppingCart.addCoupon(amountCoupon));
+    }
+
+    @Test
+    public void givenEmptyShoppingCartWithAmountCouponOverMinPurchaseAmountWhenAddCouponCalledThenItShouldReturnFalse() {
+        Coupon amountCoupon = new AmountCoupon(10.0, 2.0);
+
+        assertFalse(shoppingCart.addCoupon(amountCoupon));
     }
 
     @Test
