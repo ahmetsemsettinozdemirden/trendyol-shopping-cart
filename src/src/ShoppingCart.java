@@ -46,9 +46,8 @@ public class ShoppingCart {
 
     private Set<Category> findAllCategories() {
         Set<Category> categories = new HashSet<>();
-        for (Product product: productQuantities.keySet()) {
+        for (Product product: productQuantities.keySet())
             categories.addAll(product.getCategory().getAllParents());
-        }
         return categories;
     }
 
@@ -58,14 +57,8 @@ public class ShoppingCart {
                 .collect(Collectors.toList());
     }
 
-    private double getTotalAmount() {
-        double totalAmount = 0.0;
-        for (Map.Entry<Product, Integer> entry: productQuantities.entrySet()){
-            Product product = entry.getKey();
-            int quantity = entry.getValue();
-            totalAmount += product.getPrice() * quantity;
-        }
-        return totalAmount;
+    private double getTotalCartAmount() {
+        return calculateTotalPrice(new ArrayList<>(productQuantities.keySet()));
     }
 
     public double getCampaignDiscount() {
@@ -73,23 +66,24 @@ public class ShoppingCart {
         for (Category category: findAllCategories()) {
 
             List<Product> products = findProducts(category);
-            int productQuantity = products.stream().mapToInt(product -> productQuantities.get(product)).sum();
+            int productQuantity = calculateProductQuantity(products);
             List<Campaign> campaigns = category.getAppliedCampaigns(productQuantity);
 
-            double totalPrice = products.stream().mapToDouble(product -> productQuantities.get(product) * product.getPrice()).sum();
             for (Campaign campaign: campaigns) {
-                totalDiscount += campaign.getDiscount(totalPrice);
+                totalDiscount += campaign.getDiscount(calculateTotalPrice(products));
             }
         }
         return totalDiscount;
     }
 
-    public double getCouponDiscount() {
-        return coupons.stream().mapToDouble(coupon -> coupon.getDiscount(getTotalAmountAfterCampaignDiscount())).sum();
+    private double getTotalAmountAfterCampaignDiscount() {
+        return getTotalCartAmount() - getCampaignDiscount();
     }
 
-    private double getTotalAmountAfterCampaignDiscount() {
-        return getTotalAmount() - getCampaignDiscount();
+    public double getCouponDiscount() {
+        return coupons.stream()
+                .mapToDouble(coupon -> coupon.getDiscount(getTotalAmountAfterCampaignDiscount()))
+                .sum();
     }
 
     public double getTotalAmountAfterDiscounts() {
@@ -114,6 +108,18 @@ public class ShoppingCart {
 
     public double getDeliveryCost() {
         return deliveryCostCalculator.calculateFor(getNumberOfDeliveries(), getNumberOfProducts());
+    }
+
+    private int calculateProductQuantity(List<Product> products) {
+        return products.stream()
+                .mapToInt(product -> productQuantities.get(product))
+                .sum();
+    }
+
+    private double calculateTotalPrice(List<Product> products) {
+        return products.stream()
+                .mapToDouble(product -> productQuantities.get(product) * product.getPrice())
+                .sum();
     }
 
     @Override
@@ -155,7 +161,7 @@ public class ShoppingCart {
         for (Category category: categories) {
 
             List<Product> products = findProducts(category);
-            int productQuantity = products.stream().mapToInt(product -> productQuantities.get(product)).sum();
+            int productQuantity = calculateProductQuantity(products);
             List<Campaign> campaigns = category.getAppliedCampaigns(productQuantity);
 
             if (!campaigns.isEmpty()) {
