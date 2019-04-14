@@ -3,9 +3,9 @@
 This project implements second case of codility assignment. Since some of the java8 functionality used, you need java8 to run the project.
 
 ## Design Decisions
-- campaign applied to category not shopping cart
-- instead of enum campaigns and coupons implements interfaces
-- to have dynamic cost calculation, any new cost calculator should implement DeliveryCostCalculator
+- campaign applied to category, not to shopping cart directly.
+- instead of DiscountType, campaigns and coupons implements interfaces.
+- to achieve dynamic cost calculation, we use DeliveryCostCalculator and any new cost calculator should implement it.
 
 ## Testing
 Test Driven Development methodology followed during development of this project. You can test project with jUnit4.

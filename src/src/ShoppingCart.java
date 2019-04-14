@@ -142,16 +142,19 @@ public class ShoppingCart {
         String productsStr = "";
         List<Category> categories = new ArrayList<>(getCategories());
         categories.sort(null);
-        for (Category category: categories) {
-            productsStr += "- " + category + "\n";
-            List<Product> products = findProducts(category);
-            for (Product product: products) {
-                productsStr += "  * " + product +
-                        ", quantity: " + productQuantities.get(product) +
-                        ", totalPrice: " + String.format("%.2f", (productQuantities.get(product) * product.getPrice())) + "TL\n";
-            }
-        }
+        for (Category category: categories)
+            productsStr += getProductCategoryText(category);
         return productsStr;
+    }
+
+    private String getProductCategoryText(Category category) {
+        String text = "- " + category + "\n";
+        List<Product> products = findProducts(category);
+        for (Product product: products)
+            text += "  * " + product +
+                    ", quantity: " + productQuantities.get(product) +
+                    ", totalPrice: " + String.format("%.2f", (productQuantities.get(product) * product.getPrice())) + "TL\n";
+        return text;
     }
 
     private String getCampaignsAsText() {
@@ -159,26 +162,30 @@ public class ShoppingCart {
         List<Category> categories = new ArrayList<>(findAllCategories());
         categories.sort(null);
         for (Category category: categories) {
-
-            List<Product> products = findProducts(category);
-            int productQuantity = calculateProductQuantity(products);
-            List<Campaign> campaigns = category.getAppliedCampaigns(productQuantity);
-
-            if (!campaigns.isEmpty()) {
-                campaignsStr += "- " + category + "\n";
-                for (Campaign campaign : campaigns) {
-                    campaignsStr += "  # " + campaign + "\n";
-                }
-            }
+            campaignsStr += getCampaignCategoryText(category);
         }
         return campaignsStr;
     }
 
+    private String getCampaignCategoryText(Category category) {
+        String text = "";
+        List<Product> products = findProducts(category);
+        int productQuantity = calculateProductQuantity(products);
+        List<Campaign> campaigns = category.getAppliedCampaigns(productQuantity);
+
+        if (!campaigns.isEmpty()) {
+            text += "- " + category + "\n";
+            for (Campaign campaign : campaigns) {
+                text += "  # " + campaign + "\n";
+            }
+        }
+        return text;
+    }
+
     private String getCouponsAsText() {
         String couponsStr = "";
-        for (Coupon coupon: coupons) {
+        for (Coupon coupon: coupons)
             couponsStr += "- " + coupon.toString() + "\n";
-        }
         return couponsStr;
     }
 
