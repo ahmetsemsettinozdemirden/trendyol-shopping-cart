@@ -274,6 +274,28 @@ public class ShoppingCartTest {
     }
 
     @Test
+    public void givenShoppingCartWithCampaignsAndCouponsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithDiscounts() {
+        Campaign rateCampaign = new RateCampaign(25.0, 3);
+        Campaign amountCampaign = new AmountCampaign(5.0, 2);
+        category1.addCampaign(rateCampaign);
+        subcategory1.addCampaign(amountCampaign);
+
+        shoppingCart.addProduct(3, product1);
+        shoppingCart.addProduct(2, product2);
+        shoppingCart.addProduct(5, product3);
+
+        Coupon rateCoupon = new RateCoupon(10.0, 10.0);
+        Coupon amountCoupon = new AmountCoupon(8.0, 2.5);
+
+        shoppingCart.addCoupon(rateCoupon);
+        shoppingCart.addCoupon(amountCoupon);
+
+        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
+
+        assertEquals(97.175, totalAmount, 0.001);
+    }
+
+    @Test
     public void givenShoppingCartWhenGetDeliveryCostCalledThenItShouldReturnDeliveryCost() {
 
         Category category1 = new Category("category1");
@@ -298,8 +320,43 @@ public class ShoppingCartTest {
         assertEquals(2.99, shoppingCart.getDeliveryCost(), 0.001);
     }
 
-    private Product createProduct(String productTitle, double productPrice, String categoryTitle) {
-        return new Product(productTitle, productPrice, new Category(categoryTitle));
+    @Test
+    public void givenShoppingCartWhenPrintCalledItReturnsShoppingCartOutput() {
+        Campaign rateCampaign = new RateCampaign(25.0, 3);
+        Campaign amountCampaign = new AmountCampaign(5.0, 2);
+        category1.addCampaign(rateCampaign);
+        subcategory1.addCampaign(amountCampaign);
+
+        shoppingCart.addProduct(3, product1);
+        shoppingCart.addProduct(2, product2);
+        shoppingCart.addProduct(5, product3);
+
+        Coupon rateCoupon = new RateCoupon(10.0, 10.0);
+        Coupon amountCoupon = new AmountCoupon(8.0, 2.5);
+
+        shoppingCart.addCoupon(rateCoupon);
+        shoppingCart.addCoupon(amountCoupon);
+
+        assertEquals("" +
+                "=== PRODUCTS ===\n" +
+                "- category1\n" +
+                "  - subcategory1\n" +
+                "    * product1: quantity: 3, unitPrice: 20.0TL, totalPrice: 100.0TL\n" +
+                "  - subcategory2\n" +
+                "    * product2: quantity: 2, unitPrice: 20.0TL, totalPrice: 100.0TL\n" +
+                "- category2\n" +
+                "  * product3: quantity: 5, unitPrice: 20.0TL, totalPrice: 100.0TL\n" +
+                "=== CAMPAIGNS ===\n" +
+                "- category1\n" +
+                "  # rateCampaign: minProductQuantity: 3, rate: %25.0\n" +
+                "  - subcategory1\n" +
+                "    # amountCampaign: minProductQuantity: 2, amount: 5.0TL\n" +
+                "=== COUPONS ===\n" +
+                "- rateCoupon: minPurchaseAmount: 10.0TL, rate: %10.0\n" +
+                "- amountCoupon: minPurchaseAmount: 8.0TL, amount: 2.5TL\n" +
+                "=== SUMMARY ===\n" +
+                "totalAmount: 97.17TL\n" +
+                "deliveryCost: 15.99TL\n", shoppingCart.toString());
     }
 
 }

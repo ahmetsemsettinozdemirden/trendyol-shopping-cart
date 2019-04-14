@@ -12,6 +12,7 @@ public class FixedDeliveryCostCalculator implements DeliveryCostCalculator {
         this.costPerProduct = costPerProduct;
     }
 
+    @Override
     public double calculateFor(int numberOfDeliveries, int numberOfProducts) {
         return numberOfDeliveries * costPerDelivery + numberOfProducts * costPerProduct + FIXED_COST;
     }

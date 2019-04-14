@@ -79,6 +79,7 @@ public class ShoppingCart {
         }
         return totalDiscount;
     }
+
     public double getCouponDiscount() {
         return coupons.stream().mapToDouble(coupon -> coupon.getDiscount(getTotalAmountAfterCampaignDiscount())).sum();
     }
@@ -107,4 +108,8 @@ public class ShoppingCart {
         return deliveryCostCalculator.calculateFor(getNumberOfDeliveries(), getNumberOfProducts());
     }
 
+    @Override
+    public String toString() {
+        return "";
+    }
 }
