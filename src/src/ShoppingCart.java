@@ -24,6 +24,12 @@ public class ShoppingCart {
         this.coupons = new ArrayList<>();
     }
 
+    /**
+     * add product to shopping cart
+     * @param quantity number of products that will be added, must be positive number
+     * @param product product
+     * @return number of given product in the cart
+     */
     public int addProduct(int quantity, Product product) {
         if (quantity <= 0)
             throw new IllegalArgumentException("invalid quantity: " + quantity);
@@ -38,6 +44,11 @@ public class ShoppingCart {
         return productQuantities.get(product);
     }
 
+    /**
+     * apply coupon to shopping cart
+     * @param coupon coupon
+     * @return is successfully applied or not
+     */
     public boolean addCoupon(Coupon coupon) {
         if(coupon.isApplicable(getTotalAmountAfterDiscounts()))
             return coupons.add(coupon);
@@ -61,6 +72,10 @@ public class ShoppingCart {
         return calculateTotalPrice(new ArrayList<>(productQuantities.keySet()));
     }
 
+    /**
+     * calculates campaign discount for existing product categories in the shopping cart
+     * @return total campaign discount
+     */
     public double getCampaignDiscount() {
         double totalDiscount = 0;
         for (Category category: findAllCategories()) {
@@ -78,12 +93,20 @@ public class ShoppingCart {
         return getTotalCartAmount() - getCampaignDiscount();
     }
 
+    /**
+     * calculates coupon discount for applied coupons
+     * @return total coupon discount
+     */
     public double getCouponDiscount() {
         return coupons.stream()
                 .mapToDouble(coupon -> coupon.getDiscount(getTotalAmountAfterCampaignDiscount()))
                 .sum();
     }
 
+    /**
+     * calculates final total amount of shopping cart after discounts and coupons applied
+     * @return total amount after discounts applied
+     */
     public double getTotalAmountAfterDiscounts() {
         return getTotalAmountAfterCampaignDiscount() - getCouponDiscount();
     }
@@ -104,6 +127,11 @@ public class ShoppingCart {
         return productQuantities.entrySet().size();
     }
 
+    /**
+     * calculates delivery cost according to number of deliveries and products.
+     * calculation is delegated to calculator in the shopping cart
+     * @return delivery cost
+     */
     public double getDeliveryCost() {
         return deliveryCostCalculator.calculateFor(getNumberOfDeliveries(), getNumberOfProducts());
     }
