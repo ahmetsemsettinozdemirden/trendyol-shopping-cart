@@ -42,7 +42,7 @@ public class ShoppingCartTest {
         product = new Product("product", 1.0, category);
         subproduct = new Product("subproduct", 2.0, subcategory);
 
-        // for multiple products tests
+        // for multiple product tests
         category1 = new Category("category1");
         subcategory1 = new Category("subcategory1", category1);
         subcategory2 = new Category("subcategory2", category1);
@@ -65,7 +65,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenOneProductWithSingleCategoryWhenGetTotalAmountAfterDiscountCalledOnShoppingCartThenItShouldReturnProductPrice() {
+    public void givenTwoProductsWithSingleCategoryWhenGetTotalAmountAfterDiscountCalledOnShoppingCartThenItShouldReturnTwoTimesProductPrice() {
         shoppingCart.addProduct(2, product);
 
         double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
@@ -74,7 +74,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenShoppingCartWith1ProductWhenAddProductCalledWithSameProductAndQuantity1ThenAddProductReturns2() {
+    public void givenShoppingCartWithOneProductWhenAddProductCalledWithSameProductAndQuantity1ThenAddProductReturns2() {
         shoppingCart.addProduct(1, product);
 
         int productQuantity = shoppingCart.addProduct(1, product);
@@ -104,8 +104,9 @@ public class ShoppingCartTest {
         shoppingCart.addProduct(1, null);
     }
 
+
     @Test
-    public void givenShoppingCartWithProductsAndDiscountsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmount() {
+    public void givenShoppingCartWithProductsAndDiscountsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithDiscountApplied() {
         Campaign rateCampaign = new RateCampaign(25.0, 3);
         Campaign amountCampaign = new AmountCampaign(5.0, 2);
         category1.addCampaign(rateCampaign);
@@ -121,7 +122,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenProductsForSubcategoriesWithRateCampaignAppliedToParentCategoryWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
+    public void givenProductsForSubcategoriesWithRateCampaignAppliedToParentCategoryWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithDiscountApplied() {
         Campaign rateCampaign = new RateCampaign(20.0, 5);
         category.addCampaign(rateCampaign);
         shoppingCart.addProduct(2, product);
@@ -133,7 +134,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenProductsForSubcategoriesWithRateCampaignAppliedToSubcategoryWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithoutDiscountApplied() {
+    public void givenProductsLessThenMinimumProductQuantityForSubcategoriesWithRateCampaignAppliedToSubcategoryWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithoutDiscountApplied() {
         Campaign rateCampaign = new RateCampaign(20.0, 6);
         category.addCampaign(rateCampaign);
         shoppingCart.addProduct(2, product);
@@ -145,18 +146,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenAmountCampaignWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
-        Campaign amountCampaign = new AmountCampaign(1.0, 5);
-        category.addCampaign(amountCampaign);
-        shoppingCart.addProduct(5, product);
-
-        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
-
-        assertEquals(4.0, totalAmount, 0.001);
-    }
-
-    @Test
-    public void given2DifferentAmountCampaignsWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
+    public void given2DifferentAmountCampaignsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithDiscountApplied() {
         Campaign amountCampaign1 = new AmountCampaign(1.0, 5);
         Campaign amountCampaign2 = new AmountCampaign(1.5, 5);
         category.addCampaign(amountCampaign1);
@@ -169,7 +159,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenProductWhichIsLessThenMinimumProductQuantityForCategoryWithAmountCampaignAppliedWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithoutDiscountApplied() {
+    public void givenProductWhichIsLessThenMinimumProductQuantityForCategoryWithAmountCampaignAppliedWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithoutDiscountApplied() {
         Campaign amountCampaign = new AmountCampaign(5.0, 6);
         category.addCampaign(amountCampaign);
         shoppingCart.addProduct(5, product);
@@ -180,18 +170,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenRateCampaignWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
-        Campaign rateCampaign = new RateCampaign(10.0, 5);
-        category.addCampaign(rateCampaign);
-        shoppingCart.addProduct(5, product);
-
-        double totalAmount = shoppingCart.getTotalAmountAfterDiscounts();
-
-        assertEquals(4.5, totalAmount, 0.001);
-    }
-
-    @Test
-    public void given2DifferentRateCampaignsWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithDiscountApplied() {
+    public void given2DifferentRateCampaignsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithDiscountApplied() {
         Campaign rateCampaign1 = new RateCampaign(10.0, 5);
         Campaign rateCampaign2 = new RateCampaign(30.0, 5);
         category.addCampaign(rateCampaign1);
@@ -204,7 +183,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenProductWhichIsLessThenMinimumProductQuantityForCategoryWithRateCampaignAppliedWhenGetTotalAmountAfterDiscountsCalledOnShoppingCartThenItShouldReturnTotalAmountWithoutDiscountApplied() {
+    public void givenProductWhichIsLessThenMinimumProductQuantityForCategoryWithRateCampaignAppliedWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithoutDiscountApplied() {
         Campaign rateCampaign = new RateCampaign(10.0, 6);
         category.addCampaign(rateCampaign);
         shoppingCart.addProduct(5, product);
@@ -284,7 +263,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenShoppingCartWithProductAndAmountCouponOverMinPurchaseAmountWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithoutDiscount() {
+    public void givenShoppingCartWithProductUnderMinPurchaseAmountAndAmountCouponWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithoutDiscount() {
         shoppingCart.addProduct(10, product);
 
         Coupon amountCoupon = new AmountCoupon(20.0, 2.0);
@@ -296,7 +275,7 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenShoppingCartWithAmountCouponUnderMinPurchaseAmountWhenAddCouponCalledThenItShouldReturnTrue() {        shoppingCart.addProduct(10, product);
+    public void givenShoppingCartWithProductOverMinPurchaseAmountAndAmountCouponWhenAddCouponCalledThenItShouldReturnTrue() {
         shoppingCart.addProduct(10, product);
 
         Coupon amountCoupon = new AmountCoupon(10.0, 2.0);
@@ -305,11 +284,12 @@ public class ShoppingCartTest {
     }
 
     @Test
-    public void givenEmptyShoppingCartWithAmountCouponOverMinPurchaseAmountWhenAddCouponCalledThenItShouldReturnFalse() {
+    public void givenEmptyShoppingCartWithAmountCouponWhenAddCouponCalledThenItShouldReturnFalse() {
         Coupon amountCoupon = new AmountCoupon(10.0, 2.0);
 
         assertFalse(shoppingCart.addCoupon(amountCoupon));
     }
+
 
     @Test
     public void givenShoppingCartWithCampaignsAndCouponsWhenGetTotalAmountAfterDiscountsCalledThenItShouldReturnTotalAmountWithDiscounts() {
@@ -332,6 +312,7 @@ public class ShoppingCartTest {
 
         assertEquals(97.175, totalAmount, 0.001);
     }
+
 
     @Test
     public void givenShoppingCartWhenGetDeliveryCostCalledThenItShouldReturnDeliveryCost() {
@@ -357,6 +338,7 @@ public class ShoppingCartTest {
     public void givenEmptyShoppingCartWhenGetDeliveryCostCalledThenItShouldReturnFixedCost() {
         assertEquals(2.99, shoppingCart.getDeliveryCost(), 0.001);
     }
+
 
     @Test
     public void givenShoppingCartWhenToStringCalledItReturnsShoppingCartOutput() {
